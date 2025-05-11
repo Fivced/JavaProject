@@ -130,6 +130,8 @@
 		            <input type="email" class="form-control" id="registerEmail" name="email" required>
 					<div class="invalid-feedback" id="registerEmailError">請輸入有效的電子郵件地址</div>
 		        </div>
+		        <button type="submit" class="btn btn-warning w-100">檢查帳號是否可用</button>
+		        
 				<!-- 註冊密碼欄位 -->
 				<div class="mb-3">
 				  <label for="registerPassword" class="form-label">密碼</label>
