@@ -56,7 +56,8 @@
 	String url_checkemail = url +"/checkemail";
 	String url_login = url +"/login";
 	String url_signup = url +"/signup";
-	String url_resend = url +"/login_resend";
+	String url_resend = url +"/resend";
+	String url_send = url +"/send";
 	String url_forgetpwd = url +"/forgetpwd";
 %>
 
@@ -168,12 +169,13 @@
 		
 		    <!-- 忘記密碼 -->
 		    <div class="auth-form d-none" data-type="forgot">
-		      <form action="<%= url_forgetpwd %>" method="post">
+		      <form id="forgotpwd" method="post">
 		        <div class="mb-3">
 		          <label for="forgotEmail" class="form-label">電子郵件</label>
 		            <input type="email" class="form-control" id="forgotEmail" name="email" required>
 					<div class="invalid-feedback" id="forgotEmailError">請輸入有效的電子郵件地址</div>
 		        </div>
+		        <span id="forgetpwd_error" style="color: red; font-size:18px; font-family:Arial; font-weight: bold;"></span> <!-- m -->
 		        <button type="submit" class="btn btn-warning w-100">重設密碼連結</button>
 		      </form>
 		    </div>
@@ -242,9 +244,7 @@
 	  btn.textContent = isVisible ? '顯示' : '隱藏';
 	}
 	
-	/* m */	
-
-	
+	/* m */		
 	// (AJAX回傳)檢查Email是否已被註冊結果
 	function check_result(data) {
 		$('#check_ok').html(``);
@@ -252,9 +252,6 @@
 		switch (data.trim()) {
 			case "success":
 				$('#check_ok').html(`ok!`);
-				break;
-			case "fail_space":
-				$('#check_error').html(`請填寫您的E-mail!`);
 				break;
 			case "false":
 				$('#check_error').html(`此帳號已被註冊。`);
@@ -264,30 +261,197 @@
 				break;
 			default:
 				alert(data.trim());
-				break;
 		}		
 	}
 	
 	// (AJAX傳送)檢查Email是否已被註冊
-	function check() {
-	    $.ajax({
-	      url: "<%= url_checkemail %>", // 欲請求的API或網址
-	      type: 'POST',
-	      data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
-	          email: $('#registerEmail').val()
-	      },
-	      success: data => check_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
-	      error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
+	function check_bnd() {
+	    $.ajax({	    	
+	        url: "<%= url_checkemail %>", // 欲請求的API或網址
+	        type: 'POST',
+	        data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
+	            email: $('#registerEmail').val()
+	        },
+	        success: data => check_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
+	        error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
 	    })
 	}
 
-
-
+	// (AJAX回傳)登入結果
+	function login_result(data) {	    
+	    switch (data.trim()) {
+	        case "success":
+	    	    window.location.href = "transition.jsp?meg=newlogin"; // 利用ajax跳轉頁面
+	    	    break;
+	        case "resend":
+	            alert("您的E-mail尚未完成驗證");
+	            let email = $('#loginEmail').val();
+	            encoded = encodeURIComponent(email);
+	            window.location.href = "transition.jsp?meg=resend&email="+encoded;  // 轉跳至過場頁面顯示alert
+	            break;
+	        case "The password is incorrect.":
+	            $('#loginPassword_error').html(`密碼錯誤`);
+	            break;
+	        case "The email does not exist.":
+	            $('#loginEmail_error').html(`此E-mail尚未註冊`);
+	            break;
+	        default:
+	        	alert(data.trim());
+	      }	      
+	}
+	  
+	// (AJAX傳送)登入
+	function login_bnd() {    
+	    $.ajax({
+	        url: "<%= url_login %>", // 欲請求的API或網址
+	        type: 'POST',
+	        data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
+	                email: $('#loginEmail').val(),
+	                password: $('#loginPassword').val()
+	        },
+	        success: data => login_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
+	        error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
+	    })    
+	}
+	  
+	// (AJAX回傳)註冊結果
+	function signup_result(data) {	    
+	    switch (data.trim()) {
+	    	case "success":
+	        	let email = $('#registerEmail').val();
+	          	encoded = encodeURIComponent(email);
+	          	window.location.href = "transition.jsp?meg=send&email="+encoded;  // 轉跳至過場頁面顯示alert
+	          	break;
+	        case "false":
+	          	$('#check_error').html(`此帳號已被註冊。`);
+	          	break;
+	        case "error":
+	          	$('#check_error').html(`E-mail格式錯誤!`);
+	          	break;
+	        default:
+	        	alert(data.trim());
+	    }
+	}
+	  
+	// (AJAX傳送)註冊
+	function signup_bnd() {
+	    $.ajax({
+	        url: "<%= url_signup %>", // 欲請求的API或網址
+	        type: 'POST',
+	        data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
+	            name: $('#registerUsername').val(),
+	            email: $('#registerEmail').val(),
+	            password: $('#registerPassword').val()
+	        },
+	        success: data => signup_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
+	        error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
+	    })
+	}
 	
+	// (AJAX回傳)忘記密碼
+	function forgotpwd_result(data) {	    
+	    switch (data.trim()) {
+	    	case "false":
+	        	let email = $('#forgotEmail').val();
+	          	encoded = encodeURIComponent(email);
+	          	window.location.href = "forgetpwd.jsp?email="+encoded;
+	          	break;
+	    	case "success":
+	    		$('#forgetpwd_error').html(`此E-mail尚未註冊`);
+	    		break;
+	        default:
+	        	alert(data.trim());
+	    }
+	}
+	  
+	// (AJAX傳送)忘記密碼
+	function forgotpwd_bnd() {
+	    $.ajax({
+	        url: "<%= url_forgetpwd %>", // 欲請求的API或網址
+	        type: 'POST',
+	        data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
+	            email: $('#forgotEmail').val()
+	        },
+	        success: data => forgotpwd_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
+	        error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
+	    })
+	}	
+	
+	// 當按下鍵盤任意鍵，清空錯誤訊息
+	function key_down(e) {
+		$('#loginPassword_error').html(``);
+        $('#loginEmail_error').html(``);
+        $('#check_error').html(``);
+        $('#check_ok').html(``);
+        $('#forgetpwd_error').html(``);
+    }
+	
+	// 將key_down(e)綁定以下事件中(輸入框)
+	$(document).ready( function () {		
+	    $('#loginEmail, #loginPassword, #registerEmail, #forgotEmail').on('keydown', key_down);
+	});
+	
+	// AJAX與後端溝通
 	$('#checkemail').on("click", (event) => {
 		event.preventDefault();
-		check();
-		
+		check_bnd();		
+	});
+	
+	// AJAX與後端溝通
+	$('#login').on("submit", (event) => {
+		event.preventDefault();
+	
+		const emailInput = document.getElementById('loginEmail');
+		const emailError = document.getElementById('loginEmailError');
+		const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+	
+		if (!emailPattern.test(emailInput.value)) {
+			emailInput.classList.add('is-invalid');
+			emailError.style.display = 'block';
+			return;
+		} else {
+			emailInput.classList.remove('is-invalid');
+			emailError.style.display = 'none';
+			login_bnd();
+		}
+	});
+	
+	// AJAX與後端溝通
+	$('#signup').on("submit", (event) => {
+		event.preventDefault();
+	
+		const emailInput = document.getElementById('registerEmail');
+		const emailError = document.getElementById('registerEmailError');
+		const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+	
+		if (!emailPattern.test(emailInput.value)) {
+			emailInput.classList.add('is-invalid');
+			emailError.style.display = 'block';
+			return;
+		} else {
+			emailInput.classList.remove('is-invalid');
+			emailError.style.display = 'none';
+			signup_bnd();
+		}
+	});
+	
+	// AJAX與後端溝通
+	$('#forgotpwd').on("submit", (event) => {
+		event.preventDefault();
+	
+		const emailInput = document.getElementById('forgotEmail');
+		const emailError = document.getElementById('forgotEmailError');
+		const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+	
+		if (!emailPattern.test(emailInput.value)) {
+			emailInput.classList.add('is-invalid');
+			emailError.style.display = 'block';
+			return;
+		} else {
+			emailInput.classList.remove('is-invalid');
+			emailError.style.display = 'none';
+			forgotpwd_bnd();
+		}
 	});
 </script>
 </html>

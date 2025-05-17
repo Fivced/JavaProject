@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.net.URLEncoder" %>
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -52,11 +53,12 @@
 
 <body>
 <%
-	String meg =  request.getParameter("meg");
 	String email =  request.getParameter("email");
+	String encoded = URLEncoder.encode(email, "UTF-8");
+	
 	String url = request.getContextPath();
 	String url_verification = url +"/verification";
-	String url_resend = url +"/resend"+"?email="+email;
+	String url_resend = url +"/resend"+"?email="+encoded;
 %>
   <div class="navbar-bg"></div> <!-- 背景層 -->
 	<div class="d-flex justify-content-center mt-5" style="z-index: 2; position: relative; margin-left: 5vw;">
@@ -76,7 +78,7 @@
 		  <div class="bg-transparent text-white p-4 rounded shadow">
 		    <!-- 驗證碼 -->
 		    <div class="auth-form">
-		      <form id="verification" action="<%= url_verification %>" method="post">
+		      <form id="verification" method="post">
 		        <div class="mb-3">
 		          <label for="mailverification" class="form-label">請至您的E-mail收取驗證碼</label>
 					<input type="text" class="form-control" id="mailverification" name="mailverification" required>
@@ -97,32 +99,58 @@
 
 </body>
 <script>
-	$( () => {		
-		let meg = "<%= meg %>";
-		if ( meg != null ) {
-			if ( meg == "fail_space" ) {
-				$('#verificationError').html("請輸入驗證碼");
-			}
-			else if ( meg == "fail" ) {
-				$('#verificationError').html("請輸入正確驗證碼");
-			}
-			else if ( meg == "resend" ) {
-				alert("驗證信已重新發送");
-			}
-			else {
-				alert(meg);
-			}
-		}
+	// (AJAX回傳)驗證結果
+	function verification_result(data) {	    
+	    switch (data.trim()) {
+	    	case "success":
+	    		window.location.href = "transition.jsp?meg=newlogin";  // 轉跳至過場頁面顯示alert
+	    	    break;
+	        case "fail":
+	          	$('#verificationError').html(`請輸入正確驗證碼`);
+	          	break;
+	        case "systemerror":
+	        	alert(`伺服器錯誤，請點擊重新發送驗證信`);
+	          	break;
+	        default:
+	        	alert(data.trim());
+	    }
+	}
+	  
+	// (AJAX傳送)驗證
+	function verification() {
+	    $.ajax({
+	        url: "<%= url_verification %>", // 欲請求的API或網址
+	        type: 'POST',
+	        data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
+	            mailverification: $('#mailverification').val(),
+	            email: $('#email').val()
+	        },
+	        success: data => verification_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
+	        error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
+	    })
+	}
 
-		$('#email').val("<%= email %>");
-		
-		$('#verification').on("submit", (event) => {
-			$('#verificationError').html(``);
-			if ( $('#mailverification').val() == "" ) {
-				event.preventDefault();
-				$('#verificationError').html("請輸入驗證碼");
-			}
-		});
+	$('#email').val("<%= email %>");
+	
+	$('#verification').on("submit", (event) => {
+		event.preventDefault();
+		$('#verificationError').html(``);
+		if ( $('#mailverification').val() == "" ) {			
+			$('#verificationError').html("請輸入驗證碼");
+		}
+		else {
+			verification();
+		}
+	});
+	
+	// 當按下鍵盤任意鍵，清空錯誤訊息
+	function key_down(e) {
+		$('#verificationError').html(``);
+    }
+	
+	// 將key_down(e)綁定以下事件中(輸入框)
+	$(document).ready( function () {		
+	    $('#mailverification').on('keydown', key_down);
 	});
 </script>
 </html>

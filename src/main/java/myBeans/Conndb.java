@@ -41,7 +41,8 @@ public class Conndb {
         	pstmt.setString(1, email);
         	rs = pstmt.executeQuery();
 			if(rs.next()) { // 如果有值，取得name
-				meg = (rs.getString(1)+"");
+				meg = "success";
+				this.name = (rs.getString(1)+"");
 			}
 			else {
 				meg = "Failed to retrieve data due to an unexpected error.";
@@ -56,32 +57,27 @@ public class Conndb {
 	
 	// email check
     public String check( String checkemail ) {
-    	String meg;
-    	if ( checkemail != "" ) {
-    		try {
-                InternetAddress address = new InternetAddress(checkemail);
-                address.validate(); // 如果格式錯誤，會丟出例外
-                pstmt = conn.prepareStatement("SELECT `email` FROM `member` WHERE ( `email` = ? )");
-    			pstmt.setString( 1, checkemail );
-    			rs = pstmt.executeQuery();
-    			if(rs.next()) { // 如果有值，代表此Email已有人註冊，顯示false
-    				meg = "false";
-    	        }
-    	        else {
-    	        	meg = "success";
-    	        }
-            }
-    		catch (AddressException e) {
-    			meg = "error";
-            }
-    		catch (SQLException e) {
-    			e.printStackTrace();
-    			meg = "check failed due to an unexpected error.";
-    		}
-    	}
-    	else {
-    		meg = "fail_space";
-    	}
+    	String meg;    	
+		try {
+            InternetAddress address = new InternetAddress(checkemail);
+            address.validate(); // 如果格式錯誤，會丟出例外
+            pstmt = conn.prepareStatement("SELECT `email` FROM `member` WHERE ( `email` = ? )");
+			pstmt.setString( 1, checkemail );
+			rs = pstmt.executeQuery();
+			if(rs.next()) { // 如果有值，代表此Email已有人註冊，顯示false
+				meg = "false";
+	        }
+	        else {
+	        	meg = "success";
+	        }
+        }
+		catch (AddressException e) {
+			meg = "error";
+        }
+		catch (SQLException e) {
+			e.printStackTrace();
+			meg = "check failed due to an unexpected error.";
+		}    	
     	return meg;
     }
 	
@@ -93,13 +89,15 @@ public class Conndb {
 			pstmt.setString( 1, email );
 			rs = pstmt.executeQuery();
 			if(rs.next()) { // 如果有值，代表Email正確
-	            if ( rs.getInt(5) != 1 ) { // 接著先檢查Email是否有驗證，資料庫的欄位從1開始累加，非0開始
-	            	meg = "Email verification pending.";
-	            }
-	            else if (  password.equals(rs.getString(4)) ) {  // 接著先檢查密碼
-	            	meg = "success";
-	            	this.name = rs.getString(2);
-	            }
+				if (  password.equals(rs.getString(4)) ) {  // 接著先檢查密碼
+		            if ( rs.getInt(5) != 1 ) { // 接著檢查Email是否有驗證，資料庫的欄位從1開始累加，非0開始
+		            	meg = "Email verification pending.";
+		            }
+		            else {
+		            	meg = "success";
+		            	this.name = rs.getString(2);
+		            }
+				}
 	            else {
 	            	meg = "The password is incorrect.";
 	            }
@@ -124,7 +122,7 @@ public class Conndb {
         	pstmt.setString(2, password);
         	pstmt.setString(3, name);
         	pstmt.executeUpdate();
-        	meg = email;
+        	meg = "success";
 		}
 		catch (SQLIntegrityConstraintViolationException e) {
 			e.printStackTrace();
@@ -211,7 +209,7 @@ public class Conndb {
         	pstmt.setString(5, people);
         	pstmt.setString(6, note);
         	pstmt.executeUpdate();
-        	meg = email;
+        	meg = "success";
 		}
 		catch (SQLIntegrityConstraintViolationException e) {
 			e.printStackTrace();

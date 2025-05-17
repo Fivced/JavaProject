@@ -52,7 +52,6 @@
 
 <body> <!-- m -->
 <%
-	String email =  request.getParameter("email");
 	String meg =  request.getParameter("meg");
 	String url = request.getContextPath();
 	String url_updatepwd = url +"/updatepwd";
@@ -77,14 +76,14 @@
 		  <div class="bg-transparent text-white p-4 rounded shadow">		
 		    <!-- 註冊 -->
 		    <div class="auth-form">
-		      <form action="<%= url_updatepwd %>" id="forgetpwd" method="post"> <!-- m -->
+		      <form id="forgetpwd" method="post"> <!-- m -->
 		        <div class="mb-3">
 		          <label for="mail" class="form-label">電子郵件</label>
-		            <input type="email" class="form-control" id="email" name="email" readonly>
+		            <input type="email" class="form-control" id="email" name="email" value="${param.email}" readonly>
 					<div class="invalid-feedback" id="registerEmailError">請輸入有效的電子郵件地址</div>
 		        </div>
 		        
-				<!-- 註冊密碼欄位 -->
+				<!-- 密碼欄位 -->
 				<div class="mb-3">
 				  <label for="Password" class="form-label">密碼</label>
 				  <div class="input-group">
@@ -135,10 +134,35 @@
 	  btn.textContent = isVisible ? '顯示' : '隱藏';
 	}
 	
-	$('#email').val("<%= email %>");
-	let meg = "<%= meg %>";
-	if ( meg != null ) {
-		alert(meg);
+	// (AJAX回傳)重設密碼
+	function updatepwd_result(data) {	    
+	    switch (data.trim()) {
+	    	case "success":
+	          	window.location.href = "transition.jsp?meg=updatepwd"; // 轉跳至過場頁面顯示alert
+	          	break;
+	        default:
+	        	alert(data.trim());
+	    }
+	}
+	  
+	// (AJAX傳送)重設密碼
+	function updatepwd_bnd() {
+	    $.ajax({
+	        url: "<%= url_updatepwd %>", // 欲請求的API或網址
+	        type: 'POST',
+	        data: { // 欲傳遞的資料，使用JSON格式(鍵值對)
+	            email: $('#email').val(),
+	            password: $('#Password').val()
+	            
+	        },
+	        success: data => updatepwd_result(data), // success 代表請求成功(status:200)，data為回傳回來的資料，並送到自定義的function
+	        error: err => console.log(err) // 若發生請求失敗，會執行console.log(err)
+	    })
 	}
 	
+	// AJAX與後端溝通
+	$('#forgetpwd').on("submit", (event) => {
+		event.preventDefault();	
+		updatepwd_bnd();
+	});	
 </script>

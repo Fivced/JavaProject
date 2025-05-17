@@ -18,16 +18,22 @@ public class Sendmail {
 	}
 	
 	public void setMessage(String branch, String date, String time, String people, String note) {
-		this.message = "<p><b>Farina Pizza：</b></p><p style=\"font-size:16px; color:#000000; font-weight:bold; font-family:Arial;\">" + branch
-				+ "</p><p style=\"font-size:16px; color:#000000; font-weight:bold; font-family:Arial;\">" + date
-				+ "</p><p style=\"font-size:16px; color:#000000; font-weight:bold; font-family:Arial;\">" + time
-				+ "</p><p style=\"font-size:16px; color:#000000; font-weight:bold; font-family:Arial;\">" + people
-				+ "</p><p style=\"font-size:16px; color:#000000; font-weight:bold; font-family:Arial;\">" + note;
+		this.message = "<p><b>Farina Pizza：</b></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">餐廳門市："
+				+ "<span style=\"color:#750000;\">"+branch
+				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">日期："
+				+ "<span style=\"color:#750000;\">"+date
+				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">時間："
+				+ "<span style=\"color:#750000;\">"+time
+				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">人數："
+				+ "<span style=\"color:#750000;\">"+people
+				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">備註："
+				+ "<span style=\"color:#750000;\">"+note
+				+"</span></p></p><p style=\"font-size:12px; color:red; font-weight:bold; font-family:Arial;\">餐廳訂位只保留10分鐘，請顧客們準時抵達，謝謝~";
 	}
      
 	public String send( String email ) {
 		
-		String send_meg = "";
+		String result = "";
 		Properties props = new Properties();
 		props.put("mail.smtp.host",host);
 		props.put("mail.smtp.auth", "true");
@@ -59,12 +65,12 @@ public class Sendmail {
 			
 			Transport.send(msg); 
 			
-			send_meg = "success";
+			result = "success";
 		}
 		catch ( Exception e ) {
-			send_meg = "error：" + e.getMessage();
+			result = "error：" + e.getMessage();
 	        e.printStackTrace();
 		}
-		return send_meg;
+		return result;
 	}	
 }

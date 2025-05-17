@@ -53,10 +53,6 @@
 	}
 </style>
 <body>
-<%
-	String meg = request.getParameter("meg");
-	String name = (String)(session.getAttribute("name"));
-%>
 
   <!-- 導覽列 -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -100,22 +96,4 @@
 	</div>
 
 </body>
-<script>
-	/* m */
-	let name = "<%= name %>";
-	let meg = "<%= meg %>";
-	if ( name != null ) {
-		if ( name != "Failed to retrieve data due to an unexpected error."
-			|| data.trim() != "Failed to retrieve data due to an unexpected error." ) {
-			let megg = name+"，顧客您好!"+"歡迎使用本服務平台!";
-			alert(megg);
-		}
-		else {
-			alert(name); // 錯誤訊息
-		}
-	}
-	if ( meg != null ) {
-		alert("密碼重設完成!請重新登入");
-	}
-</script>
 </html>
