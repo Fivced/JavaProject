@@ -52,7 +52,7 @@ public class Sendmail {
 		 	
 		 	msg.setFrom(new InternetAddress(account, "Farina Pizza"));
 			msg.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
-			msg.setSubject("Test");
+			msg.setSubject("訂位資訊");
 			msg.setSentDate(new Date());
 			
 		 	MimeBodyPart htmlPart = new MimeBodyPart();
