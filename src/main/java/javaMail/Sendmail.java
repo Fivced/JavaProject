@@ -18,17 +18,34 @@ public class Sendmail {
 	}
 	
 	public void setMessage(String branch, String date, String time, String people, String note) {
-		this.message = "<p><b>Farina Pizza：</b></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">餐廳門市："
-				+ "<span style=\"color:#750000;\">"+branch
-				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">日期："
-				+ "<span style=\"color:#750000;\">"+date
-				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">時間："
-				+ "<span style=\"color:#750000;\">"+time
-				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">人數："
-				+ "<span style=\"color:#750000;\">"+people
-				+ "</span></p><p style=\"font-size:12px; color:#000000; font-weight:bold; font-family:Arial;\">備註："
-				+ "<span style=\"color:#750000;\">"+note
-				+"</span></p></p><p style=\"font-size:12px; color:red; font-weight:bold; font-family:Arial;\">餐廳訂位只保留10分鐘，請顧客們準時抵達，謝謝~";
+		this.message = "<div style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333; padding: 20px; max-width: 400px;\">" +
+				"<h3 style=\"color: #2e7d32; margin-bottom: 16px;\">🍕 Farina Pizza 訂位成功通知</h3>" +
+				"<table style=\"width: 100%; border-collapse: collapse;\">" +
+					"<tr>" +
+						"<td style=\"width: 90px; padding: 4px 8px; text-align: right; font-weight: bold; vertical-align: top;\">門市：</td>" +
+						"<td style=\"padding: 4px 8px; color: #750000;\">" + branch + "</td>" +
+					"</tr>" +
+					"<tr>" +
+						"<td style=\"padding: 4px 8px; text-align: right; font-weight: bold;\">日期：</td>" +
+						"<td style=\"padding: 4px 8px; color: #750000;\">" + date + "</td>" +
+					"</tr>" +
+					"<tr>" +
+						"<td style=\"padding: 4px 8px; text-align: right; font-weight: bold;\">時間：</td>" +
+						"<td style=\"padding: 4px 8px; color: #750000;\">" + time + "</td>" +
+					"</tr>" +
+					"<tr>" +
+						"<td style=\"padding: 4px 8px; text-align: right; font-weight: bold;\">人數：</td>" +
+						"<td style=\"padding: 4px 8px; color: #750000;\">" + people + "</td>" +
+					"</tr>" +
+					"<tr>" +
+						"<td style=\"padding: 4px 8px; text-align: right; font-weight: bold;\">備註：</td>" +
+						"<td style=\"padding: 4px 8px; color: #750000;\">" + note + "</td>" +
+					"</tr>" +
+				"</table>" +
+				"<p style=\"margin-top: 16px; color: red; font-size: 13px; font-weight: bold;\">" +
+					"※ 餐廳訂位只保留 10 分鐘，請準時抵達，謝謝您的配合！" +
+				"</p>" +
+			"</div>";
 	}
      
 	public String send( String email ) {
