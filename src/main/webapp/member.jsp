@@ -60,7 +60,6 @@
 	String url_send = url +"/send";
 	String url_forgetpwd = url +"/forgetpwd";
 %>
-
   <!-- 導覽列 -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
@@ -89,9 +88,24 @@
       </div>
     </div>
   </nav>
+<!-- 若還沒登入就點餐廳訂位，就會跳轉過來並顯示下列訊息 -->
+<%
+    String msg = (String) session.getAttribute("msg");
+    if (msg != null) {
+%>
+	<div class="alert alert-warning alert-dismissible fade show text-center"
+	     role="alert"
+	     style="position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+	            z-index: 9999; width: fit-content; max-width: 90%;">
+	  <%= msg %>
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+<%
+        session.removeAttribute("msg");
+    }
+%>
 
   <div class="navbar-bg"></div> <!-- 背景層 -->
-
 	<div class="d-flex justify-content-center mt-5" style="z-index: 2; position: relative; margin-left: 5vw;">
 	  <div class="container" style="max-width: 500px;">
 	  
@@ -153,6 +167,7 @@
 				    <input type="password" class="form-control" id="registerPassword" name="password" required>
 				    <button type="button" class="btn btn-outline-light" onclick="togglePassword('registerPassword', this)">顯示</button>
 				  </div>
+				  <div class="form-text text-danger" id="passwordError" style="display: none;"></div>
 				</div>
 				
 				<!-- 確認密碼欄位 -->
@@ -243,6 +258,38 @@
 	  input.type = isVisible ? 'password' : 'text';
 	  btn.textContent = isVisible ? '顯示' : '隱藏';
 	}
+	
+	// 密碼複雜度檢查
+	const passwordInput = document.getElementById('registerPassword');
+	const passwordError = document.getElementById('passwordError');
+
+	passwordInput.addEventListener('input', function () {
+	  const value = this.value;
+
+	  const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+	  if (!pattern.test(value)) {
+	    passwordInput.classList.add('is-invalid');
+	    passwordError.style.display = 'block';
+	    passwordError.textContent = '密碼需包含：至少1個大寫、1個小寫、1個數字、1個特殊符號，且長度至少8位';
+	  } else {
+	    passwordInput.classList.remove('is-invalid');
+	    passwordError.style.display = 'none';
+	  }
+	});
+	
+	//提交時再次驗證密碼複雜度
+	document.getElementById('signup').addEventListener('submit', function (e) {
+	  const value = passwordInput.value;
+	  const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+	
+	  if (!pattern.test(value)) {
+	    e.preventDefault(); // 阻止表單送出
+	    passwordInput.classList.add('is-invalid');
+	    passwordError.style.display = 'block';
+	    passwordError.textContent = '密碼不符合複雜度規範，請重新輸入';
+	  }
+	});
 	
 	/* m */		
 	// (AJAX回傳)檢查Email是否已被註冊結果

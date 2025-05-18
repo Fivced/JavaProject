@@ -14,10 +14,10 @@ public class Conndb {
     private ResultSet rs;
     
     static final String JDBC_DRIVER = "org.mariadb.jdbc.Driver"; // JDBC driver name
-    static final String DB_URL = "jdbc:mariadb://127.0.0.1/farina_pizza"; // database URL
+    static final String DB_URL = "jdbc:mariadb://127.0.0.1:3307/farina_pizza"; // database URL
     
     static final String USER = "root"; // Database credentials
-    static final String PASS = "123456"; // Database credentials
+    static final String PASS = "cs456789"; // Database credentials
     
     public Conndb() { // 由於資料庫一開始的建立需要的均是相同資訊，因此把這些資訊撰寫在建構子，即可在創建物件的當下，執行以下程式碼。
     	try {

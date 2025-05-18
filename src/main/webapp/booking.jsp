@@ -1,5 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+    String email = (String)(session.getAttribute("email"));
+    if (email == null) {
+        session.setAttribute("msg", "請先登入再訂位");
+        response.sendRedirect("member.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -100,28 +108,28 @@
 	    <div class="mb-3">
 	      <label for="time" class="form-label">選擇時間</label>
 	      <select class="form-select" id="time" name="time" required>
-	        <option value="" disabled selected>請選擇時間</option>
-	        <option value="11:30">11:30</option>
-	        <option value="12:00">12:00</option>
-	        <option value="11:30">12:30</option>
-	        <option value="12:00">13:00</option>
-	        <option value="11:30">13:30</option>
-	        <option value="12:00">14:00</option>
-	        <option value="11:30">14:30</option>
-	        <option value="12:00">15:00</option>
-	        <option value="11:30">15:30</option>
-	        <option value="12:00">16:00</option>
-	        <option value="11:30">16:30</option>
-	        <option value="12:00">17:00</option>
-	        <option value="11:30">17:30</option>
-	        <option value="12:00">18:00</option>
-	        <option value="11:30">18:30</option>
-	        <option value="12:00">19:00</option>
-	        <option value="11:30">19:30</option>
-	        <option value="12:00">20:00</option>
-	        <option value="11:30">20:30</option>
-	        <option value="12:00">21:00</option>
-	        <option value="11:30">21:30</option>
+			<option value="" disabled selected>請選擇時間</option>
+			<option value="11:30">11:30</option>
+			<option value="12:00">12:00</option>
+			<option value="12:30">12:30</option>
+			<option value="13:00">13:00</option>
+			<option value="13:30">13:30</option>
+			<option value="14:00">14:00</option>
+			<option value="14:30">14:30</option>
+			<option value="15:00">15:00</option>
+			<option value="15:30">15:30</option>
+			<option value="16:00">16:00</option>
+			<option value="16:30">16:30</option>
+			<option value="17:00">17:00</option>
+			<option value="17:30">17:30</option>
+			<option value="18:00">18:00</option>
+			<option value="18:30">18:30</option>
+			<option value="19:00">19:00</option>
+			<option value="19:30">19:30</option>
+			<option value="20:00">20:00</option>
+			<option value="20:30">20:30</option>
+			<option value="21:00">21:00</option>
+			<option value="21:30">21:30</option>
 	      </select>
 	    </div>
 	
@@ -143,4 +151,32 @@
 
 
 </body>
+<script>
+  // 設定最小日期為今天
+  const dateInput = document.getElementById('date');
+  const timeSelect = document.getElementById('time');
+
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('min', today);
+
+  // 設定最小時段為現在
+  window.addEventListener('DOMContentLoaded', () => {
+	    const select = document.getElementById('time');
+	    const now = new Date();
+	    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+	    for (const option of select.options) {
+	      if (option.value) {
+	        // option.value 格式是 "HH:mm"
+	        const [hour, minute] = option.value.split(':').map(Number);
+	        const optionMinutes = hour * 60 + minute;
+
+	        // 已經過去的時間設 disabled
+	        if (optionMinutes <= nowMinutes) {
+	          option.disabled = true;
+	        }
+	      }
+	    }
+	  });
+</script>
 </html>

@@ -90,6 +90,7 @@
 				    <input type="Password" class="form-control" id="Password" name="Password" required>
 				    <button type="button" class="btn btn-outline-light" onclick="togglePassword('Password', this)">顯示</button>
 				  </div>
+				  <div class="form-text text-danger" id="passwordError" style="display: none;"></div>
 				</div>
 				
 				<!-- 確認密碼欄位 -->
@@ -133,6 +134,48 @@
 	  input.type = isVisible ? 'password' : 'text';
 	  btn.textContent = isVisible ? '顯示' : '隱藏';
 	}
+	
+	// 密碼檢查
+	  const passwordInput = document.getElementById('Password');
+	  const confirmPassword = document.getElementById('confirmPassword');
+	  const passwordError = document.getElementById('passwordError');
+	
+	  // 密碼複雜度檢查
+	  passwordInput.addEventListener('input', function () {
+	    const value = this.value;
+	    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+	
+	    if (!pattern.test(value)) {
+	      passwordInput.classList.add('is-invalid');
+	      passwordError.style.display = 'block';
+	      passwordError.textContent = '密碼需包含：至少1個大寫、1個小寫、1個數字、1個特殊符號，且長度至少8位';
+	    } else {
+	      passwordInput.classList.remove('is-invalid');
+	      passwordError.style.display = 'none';
+	    }
+	  });
+	
+	  // 密碼一致性檢查
+	  confirmPassword.addEventListener('input', function () {
+	    if (passwordInput.value !== confirmPassword.value) {
+	      confirmPassword.setCustomValidity('密碼不一致');
+	    } else {
+	      confirmPassword.setCustomValidity('');
+	    }
+	  });
+	
+	  // 表單送出前再次檢查
+	  document.getElementById('forgetpwd').addEventListener('submit', function (e) {
+	    const value = passwordInput.value;
+	    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+	
+	    if (!pattern.test(value)) {
+	      e.preventDefault(); // 阻止送出
+	      passwordInput.classList.add('is-invalid');
+	      passwordError.style.display = 'block';
+	      passwordError.textContent = '密碼不符合複雜度規範，請重新輸入';
+	    }
+	  });
 	
 	// (AJAX回傳)重設密碼
 	function updatepwd_result(data) {	    
