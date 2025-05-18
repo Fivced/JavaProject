@@ -234,7 +234,18 @@ public class backend extends HttpServlet {
 						+"&date="+date+"&time="+time+"&people="+people+"&note="+note);
 			}
     	}
-    	else {
+    	else if (urlp.equals("/logout")) {
+    	    HttpSession session = request.getSession(false); // 不建立新 session
+    	    if (session != null) {
+    	        session.invalidate(); // 直接清除所有 session
+    	    }
+
+    	    // 建立新 session 儲存提示訊息
+    	    session = request.getSession(true);
+    	    session.setAttribute("msg", "您已成功登出！");
+    	    
+    	    response.sendRedirect(url + "/index.jsp"); // 回到首頁
+    	}  	else {
 			HttpSession session = request.getSession(); // 登出，設定session
 			session.setAttribute("name", "logout");
 			session.setAttribute("mail", "logout");

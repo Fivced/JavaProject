@@ -72,9 +72,22 @@
           <li class="nav-item">
             <a class="nav-link" href="store.jsp">門市資訊</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="member.jsp">加入會員</a>
-          </li>
+		<%
+		    String username = (String) session.getAttribute("name");
+		    if (username != null && !username.equals("logout")) {
+		%>
+		    <li class="nav-item">
+		        <a class="nav-link" href="<%= request.getContextPath() %>/logout">登出</a>
+		    </li>
+		<%
+		    } else {
+		%>
+		    <li class="nav-item">
+		        <a class="nav-link" href="member.jsp">加入會員</a>
+		    </li>
+		<%
+		    }
+		%>
           <li class="nav-item">
             <a class="nav-link" href="booking.jsp">餐廳訂位</a>
           </li>
@@ -82,6 +95,19 @@
       </div>
     </div>
   </nav>
+
+<!-- 登出訊息 -->
+<%
+    String msg = (String) session.getAttribute("msg");
+    if (msg != null) {
+%>
+    <div class="alert alert-warning text-center" role="alert" style="position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 90%;">
+        <%= msg %>
+    </div>
+<%
+        session.removeAttribute("msg"); // 顯示後清除
+    }
+%>
 
   <!-- 背景圖區塊 -->
   <div class="navbar-bg"></div>
@@ -96,4 +122,13 @@
 	</div>
 
 </body>
+<script>
+    setTimeout(() => {
+        const alertBox = document.querySelector('.alert');
+        if (alertBox) {
+            alertBox.remove();
+        }
+    }, 3000); // 3秒後自動關閉提示
+</script>
+
 </html>

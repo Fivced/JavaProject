@@ -59,6 +59,8 @@
 	String url_resend = url +"/resend";
 	String url_send = url +"/send";
 	String url_forgetpwd = url +"/forgetpwd";
+
+
 %>
   <!-- 導覽列 -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -78,10 +80,23 @@
           <li class="nav-item">
             <a class="nav-link" href="store.jsp">門市資訊</a>
           </li>
+		<%
+		    String username = (String) session.getAttribute("name");
+		    if (username != null && !username.equals("logout")) {
+		%>
+		    <li class="nav-item">
+		        <a class="nav-link" href="<%= request.getContextPath() %>/logout">登出</a>
+		    </li>
+		<%
+		    } else {
+		%>
+		    <li class="nav-item">
+		        <a class="nav-link" href="member.jsp">加入會員</a>
+		    </li>
+		<%
+		    }
+		%>
           <li class="nav-item">
-            <a class="nav-link" href="member.jsp">加入會員</a>
-          </li>
-          <li class="navS-item">
             <a class="nav-link" href="booking.jsp">餐廳訂位</a>
           </li>
         </ul>
