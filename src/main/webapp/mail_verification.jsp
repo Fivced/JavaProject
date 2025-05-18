@@ -80,7 +80,7 @@
 		    <div class="auth-form">
 		      <form id="verification" method="post">
 		        <div class="mb-3">
-		          <label for="mailverification" class="form-label">請至您的E-mail收取驗證碼</label>
+		          <label for="mailverification" class="form-label">請至您的E-mail收取驗證碼並輸入：</label>
 					<input type="text" class="form-control" id="mailverification" name="mailverification" required>
 					<div id="verificationError" style="color: red;"></div>
 					<input type="hidden" class="form-control" id="email" name="email">

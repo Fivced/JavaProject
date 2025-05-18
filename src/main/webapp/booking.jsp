@@ -97,10 +97,13 @@
   <!-- 背景圖區塊 -->
   <div class="navbar-bg"></div>
   
-	<div class="container py-5 text-white" style="max-width: 500px;">
+	<div class="container py-5 text-white" style="max-width: 600px;">
 	  <h2 class="mb-4">線上訂位</h2>
-	
+ 	  	
 	  <form action="<%= url_booking %>" method="post" class="semi-black-bg text-white shadow">
+	    <div class="mb-3">
+	      <p class="text-warning fs-5 mb-0">※ 當天請電話訂位，線上僅提供隔日及之後訂位。</p>
+	    </div>
 	    <!-- 分店選擇 -->
 	    <div class="mb-3">
 	      <label for="branch" class="form-label">選擇分店</label>
@@ -165,7 +168,17 @@
 
 </body>
 <script>
-  // 設定最小日期為今天
+
+const dateInput = document.getElementById('date');
+const timeSelect = document.getElementById('time');
+
+// 計算明天日期
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const minDate = tomorrow.toISOString().split('T')[0];
+
+dateInput.setAttribute('min', minDate);
+/*   // 設定最小日期為今天
   const dateInput = document.getElementById('date');
   const timeSelect = document.getElementById('time');
 
@@ -174,22 +187,23 @@
 
   // 設定最小時段為現在
   window.addEventListener('DOMContentLoaded', () => {
-	    const select = document.getElementById('time');
-	    const now = new Date();
-	    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    const select = document.getElementById('time');
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-	    for (const option of select.options) {
-	      if (option.value) {
-	        // option.value 格式是 "HH:mm"
-	        const [hour, minute] = option.value.split(':').map(Number);
-	        const optionMinutes = hour * 60 + minute;
+    for (const option of select.options) {
+      if (option.value) {
+        // option.value 格式是 "HH:mm"
+        const [hour, minute] = option.value.split(':').map(Number);
+        const optionMinutes = hour * 60 + minute;
 
-	        // 已經過去的時間設 disabled
-	        if (optionMinutes <= nowMinutes) {
-	          option.disabled = true;
-	        }
-	      }
-	    }
-	  });
-</script>
+        // 已經過去的時間設 disabled
+        if (optionMinutes <= nowMinutes) {
+          option.disabled = true;
+        }
+      }
+    }
+  }); */
+  
+ </script>
 </html>
